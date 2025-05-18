@@ -34,3 +34,15 @@ st.bar_chart(pub_type_counts)
 st.subheader("🧪 Data Modalities Used")
 modality_counts = df['Data Modality'].value_counts()
 st.bar_chart(modality_counts)
+
+from chatbot import build_chatbot
+
+st.subheader("🤖 Ask Me About My Research")
+
+openai_key = st.secrets["openai_api_key"]
+qa_chain = build_chatbot(openai_key)
+
+question = st.text_input("Ask a question (e.g., 'Do you work with deep learning on cancer imaging?')")
+if question:
+    answer = qa_chain.run(question)
+    st.success(answer)
