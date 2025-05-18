@@ -1,13 +1,36 @@
 # app.py
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
+st.set_page_config(page_title="Toktam Khatibi Research Dashboard", layout="wide")
 st.title("📊 Toktam Khatibi's Research Dashboard")
 
-df = pd.read_csv("publications.csv")
+# Load data
+df = pd.read_csv("publications.csv", encoding="ISO-8859-1")
 
-st.write("### 🧠 My Research Publications")
-st.dataframe(df)
+# Main display
+st.subheader("🧠 Publications Table")
+st.dataframe(df[['title', 'year', 'Data Modality', 'PublicationType', 'link']])
 
-st.write("### 📅 Publications per Year")
-st.bar_chart(df['Year'].value_counts().sort_index())
+# 1. Publications per Year
+st.subheader("📅 Publications Per Year")
+year_counts = df['year'].value_counts().sort_index()
+st.bar_chart(year_counts)
+
+# 2. Research Topic Frequencies
+topic_cols = df.columns[2:20]  # All binary topic columns
+topic_counts = df[topic_cols].sum().sort_values(ascending=False)
+
+st.subheader("📚 Research Topics Frequency")
+st.bar_chart(topic_counts)
+
+# 3. Publication Types
+st.subheader("📄 Publication Types")
+pub_type_counts = df['PublicationType'].value_counts()
+st.bar_chart(pub_type_counts)
+
+# 4. Data Modalities
+st.subheader("🧪 Data Modalities Used")
+modality_counts = df['Data Modality'].value_counts()
+st.bar_chart(modality_counts)
