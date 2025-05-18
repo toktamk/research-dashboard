@@ -7,7 +7,7 @@ st.set_page_config(page_title="Toktam Khatibi Research Dashboard", layout="wide"
 st.title("📊 Toktam Khatibi's Research Dashboard")
 
 # Load data
-df = pd.read_csv("publications.csv", encoding="ISO-8859-1")
+df = pd.read_csv("data/publications.csv", encoding="ISO-8859-1")
 
 # Main display
 st.subheader("🧠 Publications Table")
