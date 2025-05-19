@@ -15,6 +15,7 @@ An interactive Streamlit dashboard that visualizes my publications and research 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+```
 
 ## 🤖 Research Q&A Chatbot with LLM + RAG Consensus Reasoning
 
