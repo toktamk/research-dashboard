@@ -19,7 +19,7 @@ streamlit run app.py
 
 ## 🤖 Research Q&A Chatbot with LLM + RAG Consensus Reasoning
 
-This project is an advanced research-focused chatbot that answers questions about your scientific publications using a **multi-step reasoning algorithm** combining general large language models (LLMs) and Retrieval-Augmented Generation (RAG) over your own papers.
+This project is an advanced research-focused chatbot that answers questions about my scientific publications using a **multi-step reasoning algorithm** combining general large language models (LLMs) and Retrieval-Augmented Generation (RAG) over my own papers.
 
 ---
 
@@ -41,7 +41,7 @@ The chatbot answers each user question using a **three-step algorithm**:
 ### 🛠️ Features
 
 - Multi-source answer generation and reasoning
-- Semantic search over your own publications (PDF-based)
+- Semantic search over my own publications (PDF-based)
 - Streamlit-based interactive UI
 - Intermediate reasoning trace: displays **all three steps**
 
