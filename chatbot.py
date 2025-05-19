@@ -9,8 +9,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 # Load models
 qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
-llm_general = pipeline("text-generation", model="sshleifer/distil-gpt2")
-llm_merge = pipeline("text-generation", model="sshleifer/distil-gpt2")
+llm_general = pipeline("text-generation", model="gpt2")
+llm_merge = pipeline("text-generation", model="gpt2")
 
 def load_documents():
     docs = []
