@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from chatbot import load_documents, build_vectorstore, get_answer
 
 st.set_page_config(page_title="Toktam Khatibi Research Dashboard", layout="wide")
 st.title("📊 Toktam Khatibi's Research Dashboard")
@@ -35,25 +36,16 @@ st.subheader("🧪 Data Modalities Used")
 modality_counts = df['Data Modality'].value_counts()
 st.bar_chart(modality_counts)
 
-from chatbot import build_chatbot
-
+# 5. QA Bot
 st.subheader("🤖 Ask Me About My Research")
 
-# Build the chatbot (no API key needed now)
-with st.spinner("Setting up the chatbot..."):
-    qa_chain = build_chatbot()
+with st.spinner("Setting up the chatbot (embedding & indexing)..."):
+    docs = load_documents()
+    texts, index, embeddings = build_vectorstore(docs)
 st.success("Chatbot is ready!")
 
-# Ask a question
 question = st.text_input("Ask a question (e.g., 'Do you work with deep learning on cancer imaging?')")
 if question:
     with st.spinner("Thinking..."):
-        result = qa_chain(question)
-        answer = result["result"]
+        answer = get_answer(question, texts, index, embeddings)
         st.success(answer)
-
-        # Optional: Show source documents
-        with st.expander("Sources used"):
-            for doc in result["source_documents"]:
-                st.markdown(f"**Source:** {doc.metadata.get('source', 'Unknown')}")
-                st.write(doc.page_content[:500] + "...")
