@@ -2,7 +2,7 @@ streamlit
 pandas
 matplotlib
 langchain
-openai
+transformers
 faiss-cpu
 PyMuPDF
 langchain-community
