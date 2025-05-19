@@ -11,14 +11,15 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
-# Load API key from env (Streamlit Cloud reads this from .streamlit/secrets.toml)
+# Load API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def load_documents():
     docs = []
-    for file in os.listdir("papers"):
+    papers_dir = "papers"
+    for file in os.listdir(papers_dir):
         if file.endswith(".pdf"):
-            loader = PyMuPDFLoader(os.path.join("papers", file))
+            loader = PyMuPDFLoader(os.path.join(papers_dir, file))
             docs.extend(loader.load())
     return docs
 
@@ -31,12 +32,12 @@ def build_vectorstore(docs):
     index.add(np.array(embeddings))
     return texts, index, embeddings
 
-def ask_openai(prompt, max_tokens=300):
-    response = openai.ChatCompletion.create(
+def ask_openai(prompt, max_tokens=300, temperature=0.5):
+    response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.5,
-        max_tokens=max_tokens
+        max_tokens=max_tokens,
+        temperature=temperature
     )
     return response.choices[0].message.content.strip()
 
@@ -45,16 +46,16 @@ def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_lim
     prompt_general = f"Answer this research-related question concisely:\n{question}"
     answer1 = ask_openai(prompt_general, max_tokens=200)
 
-    # Step 2: RAG - use vector search to get context from papers
+    # Step 2: RAG - retrieve context using vector search
     q_embedding = embedder.encode([question])
-    _, I = index.search(np.array(q_embedding), top_k)
-    retrieved = " ".join([texts[i] for i in I[0]])
+    distances, indices = index.search(np.array(q_embedding), top_k)
+    retrieved = " ".join([texts[i] for i in indices[0]])
     retrieved = retrieved[:token_limit]  # truncate to avoid prompt overload
 
-    # Use compact QA model to avoid OpenAI call
+    # Use local QA pipeline for context-based answer
     answer2 = qa_pipeline(question=question, context=retrieved)['answer']
 
-    # Step 3: Merge both into one final answer using OpenAI
+    # Step 3: Merge both answers into a final concise answer using OpenAI
     merge_prompt = (
         f"Question: {question}\n"
         f"Answer from general model: {answer1}\n"
