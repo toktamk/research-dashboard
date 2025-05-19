@@ -49,7 +49,11 @@ The chatbot answers each user question using a **three-step algorithm**:
 
 ### 📂 Project Structure
 ├── app.py # Streamlit UI
+
 ├── chatbot.py # LLM + RAG + merging logic
+
 ├── requirements.txt # Dependencies
+
 ├── papers/ # Folder to store PDF research papers
+
 └── data/publications.csv # Metadata CSV used for the dashboard
