@@ -2,7 +2,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-from chatbot import load_documents, build_vectorstore, get_answer
+from chatbot import load_documents, build_vectorstore, get_answer_with_steps
 
 st.set_page_config(page_title="Toktam Khatibi Research Dashboard", layout="wide")
 st.title("📊 Toktam Khatibi's Research Dashboard")
