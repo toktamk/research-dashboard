@@ -2,10 +2,10 @@ streamlit
 pandas
 matplotlib
 langchain
-transformers
 faiss-cpu
 PyMuPDF
 langchain-community
 tiktoken
 python-dotenv
+transformers
 sentence-transformers
