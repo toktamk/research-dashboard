@@ -8,3 +8,4 @@ PyMuPDF
 langchain-community
 tiktoken
 python-dotenv
+sentence-transformers
