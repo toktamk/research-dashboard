@@ -12,7 +12,7 @@ embedder = SentenceTransformer("all-MiniLM-L6-v2")
 qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
 # Load API key from environment variable
-openai.api_key = st.secrets["OPENAI_API_KEY"] # openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = st.secrets["openai_api_key"] # openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def load_documents():
     docs = []
