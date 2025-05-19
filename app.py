@@ -47,5 +47,12 @@ st.success("Chatbot is ready!")
 question = st.text_input("Ask a question (e.g., 'Do you work with deep learning on cancer imaging?')")
 if question:
     with st.spinner("Thinking..."):
-        answer = get_answer(question, texts, index, embeddings)
-        st.success(answer)
+        answers = get_answer_with_steps(question, texts, index, embeddings)
+        st.subheader("🔍 Step 1: General LLM Answer")
+        st.info(answers["answer1_general_llm"])
+
+        st.subheader("📚 Step 2: RAG Answer (From Your Papers)")
+        st.info(answers["answer2_rag"])
+
+        st.subheader("✅ Step 3: Final Merged Answer")
+        st.success(answers["final_merged_answer"])
