@@ -39,10 +39,21 @@ from chatbot import build_chatbot
 
 st.subheader("🤖 Ask Me About My Research")
 
-openai_key = st.secrets["openai_api_key"]
-qa_chain = build_chatbot(openai_key)
+# Build the chatbot (no API key needed now)
+with st.spinner("Setting up the chatbot..."):
+    qa_chain = build_chatbot()
+st.success("Chatbot is ready!")
 
+# Ask a question
 question = st.text_input("Ask a question (e.g., 'Do you work with deep learning on cancer imaging?')")
 if question:
-    answer = qa_chain.run(question)
-    st.success(answer)
+    with st.spinner("Thinking..."):
+        result = qa_chain(question)
+        answer = result["result"]
+        st.success(answer)
+
+        # Optional: Show source documents
+        with st.expander("Sources used"):
+            for doc in result["source_documents"]:
+                st.markdown(f"**Source:** {doc.metadata.get('source', 'Unknown')}")
+                st.write(doc.page_content[:500] + "...")
