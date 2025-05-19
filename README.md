@@ -31,7 +31,7 @@ The chatbot answers each user question using a **three-step algorithm**:
    A base LLM (e.g., GPT-2) is used to generate an initial answer purely from language patterns.
 
 2. **RAG-based Answer from My Publications**  
-   The same question is answered again using a RAG approach. A semantic vector search retrieves the most relevant sections from your uploaded PDFs, and a QA model (DistilBERT) generates a context-aware answer.
+   The same question is answered again using a RAG approach. A semantic vector search retrieves the most relevant sections from my uploaded PDFs, and a QA model (DistilBERT) generates a context-aware answer.
 
 3. **LLM Consensus & Merging**  
    A third prompt is sent to the LLM, asking it to combine both answers (from Step 1 and 2) into a **final, accurate, and complete answer**.
