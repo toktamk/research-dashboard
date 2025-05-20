@@ -69,8 +69,8 @@ This project includes a **Research Q&A Chatbot** using a **Retrieval-Augmented G
 
 ### 🧬 Workflow Overview:
 
-```mermaid
-graph TD;
+```bash
+
     A[User Query] --> B[Embed Query];
     B --> C[Search FAISS Vector Store];
     C --> D[Retrieve Top-k Documents];
