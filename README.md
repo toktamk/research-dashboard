@@ -67,7 +67,8 @@ This project includes a **Research Q&A Chatbot** using a **Retrieval-Augmented G
 - **Retrieval**: FAISS vector store + `text-embedding-ada-002` embeddings  
 - **Fallback**: Seamless transition to local GPT-2-based pipeline when OpenAI is unavailable  
 
-### 🧬 Workflow Overview:
+### 🧬 Workflow Overview: 
+[Workflow of Chatbot](process.png)
 
 ```bash
 
