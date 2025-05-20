@@ -47,7 +47,7 @@ Combines both answers into a final, accurate, and complete response using an LLM
 ## 🛠️ Features
 
 - Multi-source answer generation and reasoning combining general language understanding and domain-specific retrieval
-- Semantic search over your own publications (PDF-based) for evidence-backed answers
+- Semantic search over my own publications (PDF-based) for evidence-backed answers
 - Streamlit-based interactive UI for easy access and exploration
 - Displays intermediate reasoning steps for transparency: general LLM answer, RAG answer, and final merged answer
 - Robust fallback mechanism to local models when OpenAI is not accessible
@@ -70,7 +70,7 @@ Combines both answers into a final, accurate, and complete response using an LLM
 ## 📖 Usage Overview
 
 - The dashboard loads publication metadata and displays interactive tables and charts.
-- The chatbot indexes your PDF papers using embeddings and FAISS vector search.
+- The chatbot indexes my PDF papers using embeddings and FAISS vector search.
 - When a question is asked, the chatbot attempts to answer using OpenAI GPT-3.5. If unsuccessful, it falls back to local models seamlessly.
 - Answers are presented in three steps for clarity and trustworthiness.
 
