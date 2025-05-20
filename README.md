@@ -1,6 +1,4 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# update readme.md 📊 Toktam Khatibi's Research Dashboard
+📊 Toktam Khatibi's Research Dashboard
 
 An interactive Streamlit dashboard that visualizes my publications and research projects in medical AI, NLP, and healthcare data science.
 
