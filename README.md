@@ -2,7 +2,7 @@
 
 An interactive Streamlit dashboard that visualizes my publications and research projects in medical AI, NLP, and healthcare data science.
 
-🔗 **Live App:** Coming soon...
+🔗 **Live App:** [Research Dashboard Web Application](https://share.streamlit.io/app/toktamkhatibi-publicationsdashboard/)
 
 ---
 
