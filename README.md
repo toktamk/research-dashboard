@@ -59,7 +59,6 @@ Combines both answers into a final, accurate, and complete response using an LLM
 ```
 ├── app.py                # Streamlit UI with chatbot integration and fallback handling
 ├── chatbot.py            # Unified chatbot logic with OpenAI + local fallback
-├── openaichatbot.py      # OpenAI-specific chatbot code (used internally)
 ├── requirements.txt      # Python dependencies
 ├── papers/               # Folder to store PDF research papers
 └── data/publications.csv # Metadata CSV used for dashboard visualizations
