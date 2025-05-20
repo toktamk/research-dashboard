@@ -45,7 +45,11 @@ Combines both answers into a final, accurate, and complete response using an LLM
 ---
 
 ## 🛠️ Features
-
+- 📚 Interactive publication explorer with filtering by topic, year, and type  
+- 📈 Visual analytics: publications per year, modality, research domain, and more  
+- 🤖 **Smart Q&A Chatbot**: answers questions using multi-step LLM + RAG architecture  
+- 🧠 Semantic search over your own papers (PDFs) with fallback to local models if OpenAI is unavailable  
+- 📄 Transparent reasoning pipeline with intermediate results for traceability 
 - Multi-source answer generation and reasoning combining general language understanding and domain-specific retrieval
 - Semantic search over my own publications (PDF-based) for evidence-backed answers
 - Streamlit-based interactive UI for easy access and exploration
@@ -54,25 +58,62 @@ Combines both answers into a final, accurate, and complete response using an LLM
 
 ---
 
+## 🔍 Chatbot Architecture (Summary)
+
+This project includes a **Research Q&A Chatbot** using a **Retrieval-Augmented Generation (RAG)** approach for high-fidelity, context-aware answers from your own scientific work.
+
+### 🧠 Core Components:
+- **LLM**: `gpt-3.5-turbo` for final answer synthesis  
+- **Retrieval**: FAISS vector store + `text-embedding-ada-002` embeddings  
+- **Fallback**: Seamless transition to local GPT-2-based pipeline when OpenAI is unavailable  
+
+### 🧬 Workflow Overview:
+
+```mermaid
+graph TD;
+    A[User Query] --> B[Embed Query];
+    B --> C[Search FAISS Vector Store];
+    C --> D[Retrieve Top-k Documents];
+    D --> E[Combine Context + Query];
+    E --> F[LLM (gpt-3.5-turbo)];
+    F --> G[Answer Output to Dashboard];
+```
+📖 Full Technical Details →
+
 ## 📂 Project Structure
 
 ```
-├── app.py                # Streamlit UI with chatbot integration and fallback handling
-├── chatbot.py            # Unified chatbot logic with OpenAI + local fallback
+├── app.py                # Streamlit UI with chatbot and dashboard
+├── chatbot.py            # Unified chatbot logic with OpenAI & local fallback
 ├── requirements.txt      # Python dependencies
-├── papers/               # Folder to store PDF research papers
-└── data/publications.csv # Metadata CSV used for dashboard visualizations
+├── papers/               # Folder for PDF research papers
+├── data/
+│   └── publications.csv  # Publication metadata for dashboard charts
+└── docs/
+    └── chatbot.md        # Full chatbot architecture explanation
 ```
 
 
 ---
 
 ## 📖 Usage Overview
+### 1. Dashboard:
 
-- The dashboard loads publication metadata and displays interactive tables and charts.
-- The chatbot indexes my PDF papers using embeddings and FAISS vector search.
-- When a question is asked, the chatbot attempts to answer using OpenAI GPT-3.5. If unsuccessful, it falls back to local models seamlessly.
-- Answers are presented in three steps for clarity and trustworthiness.
+- Loads publication metadata (publications.csv)
+- Displays interactive visualizations and searchable tables
+
+### 2. Chatbot:
+
+- Indexes uploaded PDFs using OpenAI embeddings and FAISS
+- Answers questions using:
+- A general LLM response
+- A document-based RAG response
+- A final merged answer combining both insights
+- If OpenAI is unavailable, it falls back to a local GPT-2 pipeline
+### 3. Transparency:
+
+Each query displays its reasoning steps: general LLM → RAG-based answer → merged consensus
+
 
 ---
 
