@@ -47,7 +47,10 @@ question = st.text_input("Ask a question (e.g., 'Do you work with deep learning 
 
 if question:
     with st.spinner("Thinking..."):
+        st.subheader("The first option is using open-ai up-to-date LLMs. But if our open-ai API Key does not work, we will return to local traditional LLMs with much less accurate answers")
         answers = get_answer_with_steps(question, texts, index, embeddings)
+        st.subheader("LLM used for this analysis is: ")
+        st.info(answers["llm"])
         st.subheader("🔍 Step 1: General LLM Answer")
         st.info(answers["answer1_general_llm"])
         st.subheader("📚 Step 2: RAG Answer (From Your Papers)")
