@@ -3,7 +3,40 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from chatbot import load_documents, build_vectorstore, get_answer_with_steps
 
-# ... (rest of your dashboard code)
+st.set_page_config(page_title="Toktam Khatibi Research Dashboard", layout="wide")
+st.title("📊 Toktam Khatibi's Research Dashboard")
+
+# Load publications metadata
+df = pd.read_csv("data/publications.csv", encoding="ISO-8859-1")
+
+# Display publications table
+st.subheader("🧠 Publications Table")
+st.dataframe(df[['title', 'year', 'Data Modality', 'PublicationType', 'link']])
+
+# Publications per year
+st.subheader("📅 Publications Per Year")
+year_counts = df['year'].value_counts().sort_index()
+st.bar_chart(year_counts)
+
+# Research topic frequencies
+topic_cols = df.columns[2:20]
+topic_counts = df[topic_cols].sum().sort_values(ascending=False)
+
+st.subheader("📚 Research Topics Frequency")
+st.bar_chart(topic_counts)
+
+# Publication types
+st.subheader("📄 Publication Types")
+pub_type_counts = df['PublicationType'].value_counts()
+st.bar_chart(pub_type_counts)
+
+# Data modalities
+st.subheader("🧪 Data Modalities Used")
+modality_counts = df['Data Modality'].value_counts()
+st.bar_chart(modality_counts)
+
+# QA Bot
+st.subheader("🤖 Ask Me About My Research")
 
 with st.spinner("Setting up the chatbot (embedding & indexing)..."):
     docs = load_documents()
