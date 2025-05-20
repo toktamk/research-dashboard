@@ -93,7 +93,8 @@ def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_lim
             return {
                 "answer1_general_llm": answer1,
                 "answer2_rag": answer2,
-                "final_merged_answer": final_answer
+                "final_merged_answer": final_answer,
+                "llm": "open-ai models"
             }
         else:
             raise RuntimeError("OpenAI not available")
@@ -110,5 +111,6 @@ def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_lim
         return {
             "answer1_general_llm": answer1,
             "answer2_rag": answer2,
-            "final_merged_answer": final_answer
+            "final_merged_answer": final_answer,
+            "llm": "local traditional models"
         }
