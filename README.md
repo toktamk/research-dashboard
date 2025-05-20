@@ -70,16 +70,7 @@ This project includes a **Research Q&A Chatbot** using a **Retrieval-Augmented G
 ### 🧬 Workflow Overview: 
 ![Workflow of Chatbot](process.png)
 
-```bash
-
-    A[User Query] --> B[Embed Query];
-    B --> C[Search FAISS Vector Store];
-    C --> D[Retrieve Top-k Documents];
-    D --> E[Combine Context + Query];
-    E --> F[LLM (gpt-3.5-turbo)];
-    F --> G[Answer Output to Dashboard];
-```
-📖 Full Technical Details →
+📖 [Full Technical Details](docs/chatbot.md)
 
 ## 📂 Project Structure
 
