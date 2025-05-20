@@ -13,7 +13,7 @@ try:
     OPENAI_AVAILABLE = True
     # Load API key if available
     try:
-        openai.api_key = st.secrets["openai_api_key"]
+        openai.api_key = st.secrets["OPENAI_API_KEY"]
     except Exception:
         openai.api_key = os.getenv("OPENAI_API_KEY")
 except ImportError:
