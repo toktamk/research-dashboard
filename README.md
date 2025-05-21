@@ -152,9 +152,3 @@ This project supports **academic self-discovery** by combining NLP, information 
 
 ⭐️ **Star this repo if you find it useful!**
 
-```
-
----
-
-Let me know if you’d like to generate a badge set (e.g., license, Python version, model support), include deployment steps (e.g., Docker), or turn this into a `README.ipynb` with live cells.
-
