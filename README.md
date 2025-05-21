@@ -4,7 +4,7 @@ An interactive Streamlit dashboard visualizing publications and research project
 
 ### 🔗 Live App
 
-**Research Dashboard Web Application** *(Link placeholder)*
+**Research Dashboard Web Application** [link](https://toktamkhatibi-publicationsdashboard.streamlit.app/)
 
 ---
 
