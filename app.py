@@ -35,7 +35,7 @@ st.subheader("🧪 Data Modalities Used")
 modality_counts = df['Data Modality'].value_counts()
 st.bar_chart(modality_counts)
 
-# QA Bot
+# QA Bot Section
 st.subheader("🤖 Ask Me About My Research")
 
 with st.spinner("Setting up the chatbot (embedding & indexing)..."):
@@ -47,13 +47,20 @@ question = st.text_input("Ask a question (e.g., 'Do you work with deep learning 
 
 if question:
     with st.spinner("Thinking..."):
-        st.subheader("The first option is using open-ai up-to-date LLMs. But if our open-ai API Key does not work, we will return to local traditional LLMs with much less accurate answers")
+        st.subheader("Mixture of Experts QA System")
         answers = get_answer_with_steps(question, texts, index, embeddings)
-        st.subheader("LLM used for this analysis is: ")
+
+        st.subheader("🔍 Expert 1 Answer")
+        st.info(answers["answer_expert1"])
+
+        st.subheader("🔍 Expert 2 Answer")
+        st.info(answers["answer_expert2"])
+
+        st.subheader("🔍 Expert 3 Answer")
+        st.info(answers["answer_expert3"])
+
+        st.subheader("✅ Final Selected Answer")
+        st.success(answers["final_moe_answer"])
+
+        st.subheader("🧠 LLM Used")
         st.info(answers["llm"])
-        st.subheader("🔍 Step 1: General LLM Answer")
-        st.info(answers["answer1_general_llm"])
-        st.subheader("📚 Step 2: RAG Answer (From Your Papers)")
-        st.info(answers["answer2_rag"])
-        st.subheader("✅ Step 3: Final Refined Answer")
-        st.success(answers["final_refined_answer"])
