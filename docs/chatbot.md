@@ -1,90 +1,159 @@
-# Research Q&A Chatbot Architecture
+Here's an updated version of your `README.md` for `chatbot.py`, integrating both the **previous version** and the **recent algorithmic changes** (specifically, the mixture-of-experts approach, multiple QA models, and improved final answer selection):
 
-This document provides an in-depth explanation of the **Research Q&A Chatbot** integrated into the Research Dashboard. The chatbot combines **large language models (LLMs)** with **retrieval-augmented generation (RAG)** techniques to provide accurate, context-aware answers based on my scientific publications.
+---
+
+````markdown
+# 🧠 Research Q&A Chatbot Architecture
+
+This document provides an updated explanation of the **Research Q&A Chatbot** integrated into the Research Dashboard. The chatbot combines **retrieval-augmented generation (RAG)** with a **mixture-of-experts (MoE)** question-answering strategy and optional LLM-based refinement to deliver evidence-based answers from your research publications.
 
 ---
 
 ## 1. Overview
 
-The chatbot answers user queries about my research by merging general language understanding with specific evidence retrieved from my own papers. It uses a **multi-step reasoning algorithm** that ensures both relevance and accuracy.
+The chatbot helps users query your personal archive of scientific papers by using a multi-model approach that enhances reliability and precision. It retrieves relevant content from your documents, queries multiple QA models, and selects or refines the best answer using LLM reasoning or voting.
 
 ---
 
 ## 2. Core Components
 
-### 2.1 Large Language Models (LLMs)
+### 2.1 Mixture of QA Experts
 
-- The primary model for generating responses is OpenAI's **`gpt-3.5-turbo`**.  
-- When OpenAI services are unavailable, the system falls back to a local pipeline based on **GPT-2** models, ensuring uninterrupted service.
+- **Three QA pipelines** are used in parallel:
+  - `distilbert-base-cased-distilled-squad`
+  - `deepset/roberta-base-squad2`
+  - `bert-large-uncased-whole-word-masking-finetuned-squad`
+- Each model answers independently based on the same retrieved context.
 
 ### 2.2 Retrieval System
 
-- Uses **FAISS** (Facebook AI Similarity Search) for efficient vector similarity search.  
-- The documents (PDFs of my papers) are converted to embeddings using OpenAI's **`text-embedding-ada-002`**.  
-- Given a query, the system searches the vector store to find the most relevant text chunks.
+- Uses **FAISS** (Facebook AI Similarity Search) for efficient dense vector search.
+- PDF files are loaded and chunked using `LangChain` utilities.
+- Embeddings are generated via `all-MiniLM-L6-v2` (from SentenceTransformers) to enable semantic search.
 
-### 2.3 Question Answering (QA) Model
+### 2.3 LLM Refinement
 
-- A fine-tuned **DistilBERT** model performs context-aware QA on the retrieved text to extract precise answers.
+- A **refinement step** is used to choose or summarize answers:
+  - First, a **majority voting** mechanism checks for agreement among experts.
+  - If no consensus, OpenAI’s **`gpt-3.5-turbo`** or a **local GPT-2 model** synthesizes a final, concise answer.
+- Optional cleanup removes boilerplate or redundant phrasing.
 
 ---
 
-## 3. Multi-step Reasoning Pipeline
+## 3. Updated Answer Generation Pipeline
 
-The chatbot follows these steps when answering queries:
-
-1. **General LLM Response:**  
-   The query is sent to the LLM (preferably GPT-3.5) to generate an initial, broad answer.
-
-2. **RAG-based Retrieval and QA:**  
-   The query is embedded and used to search the FAISS vector store. The top relevant text chunks are extracted, and the QA model provides a focused answer from these documents.
-
-3. **LLM Consensus and Merging:**  
-   Both answers are combined using an LLM to produce a final, coherent, and comprehensive response.
+```text
+                   ┌────────────────────────┐
+                   │      User Query        │
+                   └──────────┬─────────────┘
+                              │
+                ┌────────────▼────────────┐
+                │   Semantic Search via   │
+                │    FAISS + Embeddings   │
+                └────────────┬────────────┘
+                             │
+                 ┌──────────▼───────────┐
+                 │ Top-k Context Chunks │
+                 └────┬──────┬──────────┘
+                      │      │
+        ┌─────────────▼──────▼─────────────┐
+        │    QA Expert Models (BERTs)      │
+        └────┬──────────┬──────────┬───────┘
+             │          │          │
+      ┌──────▼────┐┌────▼────┐┌────▼────┐
+      │ Expert 1  ││Expert 2 ││Expert 3 │
+      └──────┬────┘└────┬────┘└────┬────┘
+             │          │          │
+        ┌────▼──────────▼──────────▼─────┐
+        │     Majority Vote or LLM       │
+        └────────────┬───────────────────┘
+                     │
+           ┌─────────▼─────────┐
+           │  Final Answer     │
+           └───────────────────┘
+````
 
 ---
 
 ## 4. Fallback Mechanism
 
-- If the OpenAI API is unreachable (due to network errors, quota limits, or missing API keys), the chatbot **automatically switches** to a fully local inference pipeline.  
-- The local pipeline uses GPT-2-based models for all reasoning steps and still provides a functional user experience without requiring any API keys.
+If the OpenAI API is unavailable (due to quota, network issues, or lack of credentials), the chatbot automatically falls back to a **local GPT-2 pipeline** for final answer synthesis, ensuring uninterrupted operation.
 
 ---
 
-## 5. Workflow Diagram
+## 5. Implementation Details
 
-![Chatbot Architecture](chatbot-architecture.png)
-
----
-
-## 6. Implementation Details
-
-- The chatbot logic is encapsulated in `chatbot.py`.  
-- The vector store is built and updated when new PDFs are added to the `papers/` folder.  
-- Embeddings are cached to speed up repeated queries.
+* All logic resides in `chatbot.py`, with optional frontend integration via `app.py`.
+* PDFs are loaded from the `papers/` folder and indexed using FAISS.
+* Embedding and inference are done locally for performance and privacy.
+* Cleanup of repeated phrases is handled with custom regex-based logic.
 
 ---
 
-## 7. Usage Notes
+## 6. Usage
 
-- The chatbot interface is integrated into the Streamlit dashboard (`app.py`).  
-- Intermediate reasoning steps (initial LLM answer, RAG answer, merged answer) are shown to enhance transparency.  
-- Users can freely ask questions about the publications, and the chatbot provides evidence-backed answers.
+### ⚙️ Setup
+
+Install required packages:
+
+```bash
+pip install torch transformers faiss-cpu sentence-transformers langchain pymupdf streamlit openai
+```
+
+### 🔑 OpenAI API Key
+
+Set your API key:
+
+```bash
+export OPENAI_API_KEY=your_key_here
+```
+
+Or define it in `st.secrets["OPENAI_API_KEY"]` for Streamlit Cloud use.
+
+### ▶️ Running the Bot
+
+```bash
+python chatbot.py
+```
+
+To launch the Streamlit interface:
+
+```bash
+streamlit run app.py
+```
+
+---
+
+## 7. Design Benefits
+
+* **Robustness**: Using multiple QA models improves fault tolerance.
+* **Accuracy**: Combining retrieved document knowledge with large LLM reasoning ensures more precise answers.
+* **Transparency**: Displays intermediate outputs for debugging and educational value.
 
 ---
 
 ## 8. Future Improvements
 
-- Integrate larger local LLMs to improve fallback quality.  
-- Support additional document types beyond PDFs.  
-- Add user feedback loop to continuously improve answer accuracy.
+* Support newer and larger open-source LLMs (e.g., Mistral, Phi-2) for local refinement.
+* Extend support to non-PDF sources (e.g., LaTeX, DOCX).
+* Allow user scoring of answers to fine-tune expert weighting.
 
 ---
 
 ## 9. Contact
 
-For further questions or contributions, please reach out at **toktamk@gmail.com**.
+For questions, issues, or suggestions, please contact:
+
+**Toktam Khatibi**
+📧 [toktamk@gmail.com](mailto:toktamk@gmail.com)
 
 ---
 
-*Document last updated: 2025-05-20*
+*Document last updated: 2025-05-21*
+
+```
+
+---
+
+Let me know if you'd like to attach a sample query-output, include a Streamlit screenshot, or add a `requirements.txt` or `Dockerfile`.
+```
