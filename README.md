@@ -1,131 +1,160 @@
 ## 📊 Toktam Khatibi's Research Dashboard
 
-An interactive Streamlit dashboard visualizing publications and research projects in medical AI, NLP, and healthcare data science, now enhanced with a **Mixture-of-Experts RAG-based chatbot**.
+An interactive Streamlit dashboard that visualizes publications and research projects in medical AI, NLP, and healthcare data science. Now upgraded with a **Mixture-of-Experts Retrieval-Augmented Generation (MoE-RAG) Chatbot** for in-depth question answering over your personal research corpus.
+
+---
 
 ### 🔗 Live App
 
-**Research Dashboard Web Application** *(https://toktamkhatibi-publicationsdashboard.streamlit.app/)*
+👉 **[Try the Dashboard Online](https://toktamkhatibi-publicationsdashboard.streamlit.app/)**
 
 ---
 
-### 📂 Features
+### 📂 Key Features
 
-* Interactive table of publications with searchable metadata
-* Visual analytics: publications per year, data modalities, publication types, and topics
-* Expandable dashboard with filtering, sorting, and linking to full papers
-* **Advanced Research Q\&A Chatbot** powered by a multi-expert LLM + Retrieval-Augmented Generation (RAG) pipeline with fallback to local and Hugging Face-hosted models
+- 🧾 Searchable, sortable table of scientific publications
+- 📈 Visual analytics: trends by year, modality, type, and research area
+- 📄 Direct links to full papers and external metadata
+- 🤖 **Advanced Q&A Chatbot**: powered by RAG + multiple QA models + LLM-based reasoning
 
 ---
 
-### 🚀 Run It Locally
+### 🚀 Quick Start
+
+Install dependencies and launch the dashboard:
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
+````
+
+---
+
+### 🤖 MoE-RAG Chatbot: Intelligent Academic Q\&A
+
+The chatbot uses your own papers to answer research questions through a **multi-expert pipeline**, ensuring high factual accuracy and explainability.
+
+#### 💡 Architecture Overview
+
+1. **Semantic Retrieval (RAG)**:
+
+   * FAISS index over PDFs
+   * Embeddings via `all-MiniLM-L6-v2` from SentenceTransformers
+
+2. **Parallel QA Models (Experts)**:
+
+   * DistilBERT (fast, lightweight)
+   * RoBERTa (robust SQuAD2-trained)
+   * BERT-large (high accuracy, context-sensitive)
+
+3. **LLM-Based Answer Selection**:
+
+   * Evaluates the three expert answers
+   * Uses GPT-3.5 (or GPT-2/Hugging Face fallback) to synthesize or select the best answer
+   * Cleans and finalizes the response for user output
+
+4. **Intermediate Outputs Displayed**:
+
+   * Transparent view of expert answers and final selection
+
+---
+
+### 🔄 Fallback Strategy
+
+If GPT-3.5 is unavailable:
+
+* ✅ Falls back to Hugging Face-hosted LLMs (no API key required)
+* ✅ If still unavailable, switches to local GPT-2 inference
+* ✅ RAG + QA pipelines remain fully functional offline
+
+---
+
+### 🛠️ Highlights
+
+* 🔍 Semantic search over uploaded research papers
+* 🧠 Robust chatbot using ensemble QA and LLM ranking
+* 📊 Integrated visual and tabular analytics
+* 🕵️ Transparent AI reasoning steps exposed to users
+* 🧩 Modular, extensible codebase for future enhancements
+
+---
+
+### 🔍 Chatbot Summary
+
+| Component      | Method/Model                             |
+| -------------- | ---------------------------------------- |
+| Retrieval      | FAISS + all-MiniLM-L6-v2 embeddings      |
+| QA Experts     | DistilBERT, RoBERTa (SQuAD2), BERT-large |
+| Final Selector | GPT-3.5-turbo / Hugging Face LLM / GPT-2 |
+| Fallback Modes | Hugging Face APIs → Local GPT-2          |
+
+---
+
+### 📁 Project Structure
+
 ```
-
----
-
-### 🤖 Mixture-of-Experts Chatbot (RAG + LLM + Fallback)
-
-This project features a next-generation research Q\&A chatbot that uses **multiple QA models** over your own papers and synthesizes the best response via a large language model (LLM).
-
-#### 💡 How It Works
-
-1. **RAG-Based Answers by Experts**: Retrieves relevant document chunks and runs question-answering with **three expert QA models**:
-
-   * DistilBERT
-   * RoBERTa (deepset/roberta-base-squad2)
-   * BERT (bert-large-uncased-whole-word-masking-finetuned-squad)
-2. **LLM-Based Selection (Mixture-of-Experts)**: All three answers are fed into an LLM (GPT-3.5, GPT-2, or Hugging Face LLM) to **evaluate and select the best response** based on clarity, accuracy, and completeness.
-3. **Transparent Output**: Shows all expert answers and the selected final answer.
-
----
-
-### 🔄 Fallback Logic
-
-If OpenAI GPT-3.5 is unavailable (due to API errors, lack of credentials, or rate limits), the chatbot:
-
-* Falls back to Hugging Face-hosted lightweight LLMs (no API key required)
-* Then uses local GPT-2 if Hugging Face fails
-* Continues using FAISS + SentenceTransformer + local QA pipelines
-
----
-
-### 🛠️ Project Highlights
-
-* 📚 Semantic search over uploaded PDFs using FAISS and sentence embeddings
-* 🤖 Robust chatbot using multi-model QA and LLM refinement
-* 📊 Visual and tabular exploration of your research profile
-* 🕵️ Transparent reasoning steps displayed to the user
-
----
-
-### 🔍 Chatbot Architecture Summary
-
-* **Retrieval**: FAISS + `all-MiniLM-L6-v2` sentence embeddings
-* **QA Experts**: 3 QA pipelines (DistilBERT, RoBERTa, BERT)
-* **Final Answer Selector**: GPT-3.5-turbo, Hugging Face-hosted LLM, or local GPT-2
-* **Fallback**: Progressive failover to Hugging Face LLMs and local GPT-2 when OpenAI is not available
-
----
-
-### 📄 Project Structure
-
-```
-├── app.py                # Streamlit UI for dashboard + chatbot
-├── chatbot.py            # Full MoE RAG chatbot logic
-├── requirements.txt      # Python dependencies
-├── papers/               # Folder containing PDFs of publications
+├── app.py                # Streamlit dashboard + chatbot frontend
+├── chatbot.py            # Mixture-of-Experts RAG chatbot logic
+├── requirements.txt      # Dependencies
+├── papers/               # Folder with research PDFs
 ├── data/
-│   └── publications.csv  # Metadata file for the dashboard
+│   └── publications.csv  # Metadata for publications
 └── docs/
-    └── chatbot.md        # (Optional) Extended architecture explanation
+    └── chatbot.md        # (Optional) Extended technical docs
 ```
 
 ---
 
 ### 📖 Usage Overview
 
-1. **Dashboard**:
+1. **Explore Publications**:
 
-   * Loads and displays research publication data
-   * Includes interactive charts and tables
-2. **Chatbot**:
+   * Search, sort, and filter your research output
+   * Visualize insights across years, topics, and types
 
-   * Uses FAISS + embeddings to retrieve relevant document context
-   * Runs 3 QA models over context (DistilBERT, RoBERTa, BERT)
-   * LLM ranks and selects best answer using OpenAI or Hugging Face-hosted models
-   * Displays all intermediate steps
-3. **Fallback**:
+2. **Ask Research Questions**:
 
-   * Progressive fallback from OpenAI to Hugging Face-hosted models, then to local GPT-2
+   * Type any question into the chatbot
+   * Retrieves relevant text from your papers
+   * Runs 3 QA models in parallel
+   * Final answer selected or synthesized by an LLM
+
+3. **Offline and Robust**:
+
+   * No OpenAI key? No problem. System falls back automatically
 
 ---
 
 ### 📩 Contact
 
-For questions or contributions, please contact: **[toktamk@gmail.com](mailto:toktamk@gmail.com)**
+Questions or suggestions?
+📧 **[toktamk@gmail.com](mailto:toktamk@gmail.com)**
 
 ---
 
 ### 💼 About
 
-Interactive dashboard for exploring Toktam Khatibi's research projects and publications with a powerful QA assistant built for academic inquiry.
+This project supports **academic self-discovery** by combining NLP, information retrieval, and interactive visualization. Built for researchers who want to organize, query, and present their work with intelligence.
 
 ---
 
-### 📊 Tech Stack
+### ⚙️ Tech Stack
 
-* Python
-* Streamlit
-* Transformers (Hugging Face)
-* SentenceTransformers
-* FAISS
+* Python · Streamlit
+* Hugging Face Transformers
+* SentenceTransformers · FAISS
 * OpenAI GPT-3.5 (optional)
-* Hugging Face LLMs (fallback)
 * GPT-2 (local fallback)
+* LangChain (PDF parsing, chunking)
+* Matplotlib / Seaborn (visualizations)
 
 ---
 
-**Star this repo if you find it useful!**
+⭐️ **Star this repo if you find it useful!**
+
+```
+
+---
+
+Let me know if you’d like to generate a badge set (e.g., license, Python version, model support), include deployment steps (e.g., Docker), or turn this into a `README.ipynb` with live cells.
+
