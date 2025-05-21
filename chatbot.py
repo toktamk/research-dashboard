@@ -89,29 +89,31 @@ def clean_repeated_phrases(text):
     return cleaned_output
 
 def refine_answers_with_llm(question, answers):
-    prompt = (
+    
+    majority_voting_answer = majority_voting_answer(answers)
+    if majority_voting_answer == "":
+        prompt = (
         f"Question: {question}\n"
         f"Answer A: {answers[0]}\n"
         f"Answer B: {answers[1]}\n"
         f"Answer C: {answers[2]}\n\n"
         "Please select the best answer and provide a brief, concise final answer only (no explanations)."
-    )
-
-    if OPENAI_AVAILABLE and openai.api_key:
-        try:
-            raw_answer = ask_openai(prompt, max_tokens=100, temperature=0.3)
-        except Exception as e:
-            print(f"OpenAI API error: {e}. Falling back to local LLM.")
+        )
+        if OPENAI_AVAILABLE and openai.api_key:
+            try:
+                raw_answer = ask_openai(prompt, max_tokens=100, temperature=0.3)
+            except Exception as e:
+                print(f"OpenAI API error: {e}. Falling back to local LLM.")
+                raw_answer = llm_refine(prompt, max_new_tokens=100, do_sample=False)[0]['generated_text'].strip()
+        else:
             raw_answer = llm_refine(prompt, max_new_tokens=100, do_sample=False)[0]['generated_text'].strip()
-    else:
-        raw_answer = llm_refine(prompt, max_new_tokens=100, do_sample=False)[0]['generated_text'].strip()
 
-    # Clean repeated phrases / boilerplate
-    cleaned = clean_repeated_phrases(raw_answer)
-    if cleaned == "":
-        return majority_voting_answer(answers)
-    else:
+        # Clean repeated phrases / boilerplate
+        cleaned = clean_repeated_phrases(raw_answer)
         return cleaned
+    else:
+        return majority_voting_answe
+    
 
 from collections import Counter
 
