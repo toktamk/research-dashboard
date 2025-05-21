@@ -4,7 +4,7 @@ An interactive Streamlit dashboard visualizing publications and research project
 
 ### 🔗 Live App
 
-**Research Dashboard Web Application** [link](https://toktamkhatibi-publicationsdashboard.streamlit.app/)
+**Research Dashboard Web Application** *(https://toktamkhatibi-publicationsdashboard.streamlit.app/)*
 
 ---
 
@@ -13,7 +13,7 @@ An interactive Streamlit dashboard visualizing publications and research project
 * Interactive table of publications with searchable metadata
 * Visual analytics: publications per year, data modalities, publication types, and topics
 * Expandable dashboard with filtering, sorting, and linking to full papers
-* **Advanced Research Q\&A Chatbot** powered by a multi-expert LLM + Retrieval-Augmented Generation (RAG) pipeline with fallback to local models
+* **Advanced Research Q\&A Chatbot** powered by a multi-expert LLM + Retrieval-Augmented Generation (RAG) pipeline with fallback to local and Hugging Face-hosted models
 
 ---
 
@@ -37,16 +37,17 @@ This project features a next-generation research Q\&A chatbot that uses **multip
    * DistilBERT
    * RoBERTa (deepset/roberta-base-squad2)
    * BERT (bert-large-uncased-whole-word-masking-finetuned-squad)
-2. **LLM-Based Selection (Mixture-of-Experts)**: All three answers are fed into an LLM (GPT-3.5 or GPT-2) to **evaluate and select the best response** based on clarity, accuracy, and completeness.
+2. **LLM-Based Selection (Mixture-of-Experts)**: All three answers are fed into an LLM (GPT-3.5, GPT-2, or Hugging Face LLM) to **evaluate and select the best response** based on clarity, accuracy, and completeness.
 3. **Transparent Output**: Shows all expert answers and the selected final answer.
 
 ---
 
 ### 🔄 Fallback Logic
 
-If OpenAI GPT-3.5 is unavailable (due to API errors, lack of credentials, or network issues), the chatbot:
+If OpenAI GPT-3.5 is unavailable (due to API errors, lack of credentials, or rate limits), the chatbot:
 
-* Switches to local GPT-2 for final answer generation
+* Falls back to Hugging Face-hosted lightweight LLMs (no API key required)
+* Then uses local GPT-2 if Hugging Face fails
 * Continues using FAISS + SentenceTransformer + local QA pipelines
 
 ---
@@ -64,8 +65,8 @@ If OpenAI GPT-3.5 is unavailable (due to API errors, lack of credentials, or net
 
 * **Retrieval**: FAISS + `all-MiniLM-L6-v2` sentence embeddings
 * **QA Experts**: 3 QA pipelines (DistilBERT, RoBERTa, BERT)
-* **Final Answer Selector**: OpenAI GPT-3.5-turbo or local GPT-2
-* **Fallback**: Fully local model path when OpenAI is not available
+* **Final Answer Selector**: GPT-3.5-turbo, Hugging Face-hosted LLM, or local GPT-2
+* **Fallback**: Progressive failover to Hugging Face LLMs and local GPT-2 when OpenAI is not available
 
 ---
 
@@ -94,11 +95,11 @@ If OpenAI GPT-3.5 is unavailable (due to API errors, lack of credentials, or net
 
    * Uses FAISS + embeddings to retrieve relevant document context
    * Runs 3 QA models over context (DistilBERT, RoBERTa, BERT)
-   * LLM ranks and selects best answer
+   * LLM ranks and selects best answer using OpenAI or Hugging Face-hosted models
    * Displays all intermediate steps
 3. **Fallback**:
 
-   * Seamless use of local models if OpenAI is not available
+   * Progressive fallback from OpenAI to Hugging Face-hosted models, then to local GPT-2
 
 ---
 
@@ -122,7 +123,8 @@ Interactive dashboard for exploring Toktam Khatibi's research projects and publi
 * SentenceTransformers
 * FAISS
 * OpenAI GPT-3.5 (optional)
-* GPT-2 (fallback)
+* Hugging Face LLMs (fallback)
+* GPT-2 (local fallback)
 
 ---
 
