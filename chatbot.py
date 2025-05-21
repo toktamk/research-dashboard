@@ -110,7 +110,8 @@ def refine_answers_with_llm(question, answers):
     cleaned = clean_repeated_phrases(raw_answer)
     if cleaned == "":
         return majority_voting_answer(answers)
-    else return cleaned
+    else:
+        return cleaned
 
 from collections import Counter
 
