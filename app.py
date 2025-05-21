@@ -55,5 +55,5 @@ if question:
         st.info(answers["answer1_general_llm"])
         st.subheader("📚 Step 2: RAG Answer (From Your Papers)")
         st.info(answers["answer2_rag"])
-        st.subheader("✅ Step 3: Final Merged Answer")
-        st.success(answers["final_merged_answer"])
+        st.subheader("✅ Step 3: Final Refined Answer")
+        st.success(answers["final_refined_answer"])
