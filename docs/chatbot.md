@@ -146,9 +146,3 @@ For questions, issues, or suggestions, please contact:
 
 *Document last updated: 2025-05-21*
 
-```
-
----
-
-Let me know if you'd like to attach a sample query-output, include a Streamlit screenshot, or add a `requirements.txt` or `Dockerfile`.
-```
