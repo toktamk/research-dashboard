@@ -77,18 +77,16 @@ def refine_answers_with_llm(question, answers):
         f"Answer A: {answers[0]}\n"
         f"Answer B: {answers[1]}\n"
         f"Answer C: {answers[2]}\n"
-        "Based on clarity, accuracy, and completeness, select the best answer and explain why:"
+        "Based on clarity, accuracy, and completeness, select the best answer and explain why briefly. "
+        "Finally, provide a short and concise summary of the best answer."
     )
-    # Try OpenAI first if available
     if OPENAI_AVAILABLE and openai.api_key:
         try:
-            return ask_openai(prompt, max_tokens=300)
+            return ask_openai(prompt, max_tokens=150, temperature=0.5)  # reduce max_tokens for brevity
         except Exception:
             print("Falling back to local LLM due to OpenAI failure.")
 
-    # Fallback to local LLM if OpenAI is not available or fails
-    generation = llm_refine(prompt, max_new_tokens=300, do_sample=True, temperature=0.7)
-    # The local pipeline returns a list of dicts, pick generated_text
+    generation = llm_refine(prompt, max_new_tokens=150, do_sample=False)  # deterministic output
     return generation[0]['generated_text'].strip()
 
 def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_limit=1500):
