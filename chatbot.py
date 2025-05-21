@@ -90,8 +90,8 @@ def clean_repeated_phrases(text):
 
 def refine_answers_with_llm(question, answers):
     
-    majority_voting_answer = majority_voting_answer(answers)
-    if majority_voting_answer == "":
+    voted_answer = majority_voting_answer(answers)
+    if voted_answer == "":
         prompt = (
         f"Question: {question}\n"
         f"Answer A: {answers[0]}\n"
@@ -112,7 +112,7 @@ def refine_answers_with_llm(question, answers):
         cleaned = clean_repeated_phrases(raw_answer)
         return cleaned
     else:
-        return majority_voting_answe
+        return voted_answer
     
 
 from collections import Counter
