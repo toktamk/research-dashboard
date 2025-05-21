@@ -68,29 +68,25 @@ def ask_openai(prompt, max_tokens=150, temperature=0.3):
     return response.choices[0].message.content.strip()
 
 def clean_repeated_phrases(text):
-    # Split text into sentences using punctuation and newlines
+    # Remove repeated boilerplate
+    text = re.sub(r"(please select.*?no explanations\.)", "", text, flags=re.IGNORECASE)
+
+    # Split into sentences and remove exact duplicates
     sentences = re.split(r'(?<=[.!?])\s+', text.strip())
-
     seen = set()
-    cleaned_sentences = []
-
-    boilerplate_phrases = [
-        "the following is a summary of the best answer and explain why briefly",
-        "the following is a summary of the best answer",
-        "based on clarity, accuracy, and completeness, select the best answer and explain why briefly",
-    ]
-
-    for sentence in sentences:
-        norm = sentence.lower().strip()
-        if not norm:
-            continue
-        if any(phrase in norm for phrase in boilerplate_phrases):
-            continue
-        if norm not in seen:
+    cleaned = []
+    for s in sentences:
+        norm = s.lower().strip()
+        if norm and norm not in seen:
             seen.add(norm)
-            cleaned_sentences.append(sentence)
+            cleaned.append(s.strip())
 
-    return " ".join(cleaned_sentences)
+    # Return only the first non-empty cleaned sentence (to keep it concise)
+    cleaned_ouput = ""
+    if cleaned:
+        cleaned_output= cleaned[0]
+          
+    return cleaned_output
 
 def refine_answers_with_llm(question, answers):
     prompt = (
@@ -111,8 +107,37 @@ def refine_answers_with_llm(question, answers):
         raw_answer = llm_refine(prompt, max_new_tokens=100, do_sample=False)[0]['generated_text'].strip()
 
     # Clean repeated phrases / boilerplate
-    return clean_repeated_phrases(raw_answer)
+    cleaned = clean_repeated_phrases(raw_answer)
+    if cleaned == "":
+        return majority_voting_answer(answers)
+    else return cleaned
 
+from collections import Counter
+
+def majority_voting_answer(answers):
+    """
+    Returns the most common answer (majority vote) from a list of answers.
+    If there's a tie, it returns all tied answers concatenated with ' / '.
+    """
+    if not answers:
+        return "No answers provided."
+
+    # Count frequency of each unique answer
+    answer_counts = Counter([ans.strip().lower() for ans in answers])
+    
+    # Find the highest frequency
+    max_count = max(answer_counts.values())
+    
+    # Get all answers with that frequency
+    majority_answers = [ans for ans, count in answer_counts.items() if count == max_count]
+    
+    # Return the most common one, or a joined string if there's a tie
+    if len(majority_answers) == 1:
+        return majority_answers[0]
+    else:
+        return " / ".join(majority_answers)
+
+    
 def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_limit=1500):
     q_embedding = embedder.encode([question], convert_to_numpy=True)
     distances, indices = index.search(q_embedding, top_k)
