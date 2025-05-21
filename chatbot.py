@@ -25,7 +25,9 @@ qa_expert3 = pipeline("question-answering", model="bert-large-uncased-whole-word
 
 # Embedding and LLMs
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
-llm_refine = pipeline("text-generation", model="gpt2")
+# Local fallback text generation LLM (lightweight, runs on CPU/GPU locally)
+local_llm_models = ["distilgpt2", "gpt2"]
+llm_refine = pipeline("text-generation", model=local_llm_models[0], device=-1)  # device=-1 to force CPU
 
 def load_pdfs_from_folder(folder_path="papers"):
     docs = []
@@ -57,13 +59,17 @@ def ask_openai(prompt, max_tokens=300, temperature=0.5):
         )
     }
 
-    response = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[system_message, {"role": "user", "content": prompt}],
-        max_tokens=max_tokens,
-        temperature=temperature
-    )
-    return response.choices[0].message.content.strip()
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[system_message, {"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        print(f"OpenAI API call failed: {e}")
+        raise e
 
 def refine_answers_with_llm(question, answers):
     prompt = (
@@ -73,10 +79,17 @@ def refine_answers_with_llm(question, answers):
         f"Answer C: {answers[2]}\n"
         "Based on clarity, accuracy, and completeness, select the best answer and explain why:"
     )
+    # Try OpenAI first if available
     if OPENAI_AVAILABLE and openai.api_key:
-        return ask_openai(prompt, max_tokens=300)
-    else:
-        return llm_refine(prompt, max_new_tokens=300, do_sample=True)[0]['generated_text'].strip()
+        try:
+            return ask_openai(prompt, max_tokens=300)
+        except Exception:
+            print("Falling back to local LLM due to OpenAI failure.")
+
+    # Fallback to local LLM if OpenAI is not available or fails
+    generation = llm_refine(prompt, max_new_tokens=300, do_sample=True, temperature=0.7)
+    # The local pipeline returns a list of dicts, pick generated_text
+    return generation[0]['generated_text'].strip()
 
 def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_limit=1500):
     q_embedding = embedder.encode([question], convert_to_numpy=True)
@@ -96,7 +109,7 @@ def get_answer_with_steps(question, texts, index, embeddings, top_k=3, token_lim
         "answer_expert2": answer2,
         "answer_expert3": answer3,
         "final_moe_answer": final_answer,
-        "llm": "OpenAI GPT-3.5" if OPENAI_AVAILABLE else "Local GPT-2"
+        "llm": "OpenAI GPT-3.5" if OPENAI_AVAILABLE and openai.api_key else "Local GPT-2"
     }
 
 if __name__ == "__main__":
