@@ -1,8 +1,3 @@
-Here's an updated version of your `README.md` for `chatbot.py`, integrating both the **previous version** and the **recent algorithmic changes** (specifically, the mixture-of-experts approach, multiple QA models, and improved final answer selection):
-
----
-
-````markdown
 # 🧠 Research Q&A Chatbot Architecture
 
 This document provides an updated explanation of the **Research Q&A Chatbot** integrated into the Research Dashboard. The chatbot combines **retrieval-augmented generation (RAG)** with a **mixture-of-experts (MoE)** question-answering strategy and optional LLM-based refinement to deliver evidence-based answers from your research publications.
